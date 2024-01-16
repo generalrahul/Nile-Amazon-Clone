@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="mb-4">Your listings</h1>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <!-- Button to navigate to add_product page -->
+            <a href="{% url 'add-product' %}" class="btn btn-primary">Add Product</a>
+        </div>
+    </div>
+    <div class="row" id="product-list">
+        <!-- Data fetched from the API will be inserted here -->
+    </div>
+</div>
+
+<script>
+    fetch('/product/')  // Replace with your API endpoint
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Log the received data
+            const productList = document.getElementById('product-list');
+            data.forEach(item => {
+                const cardCol = document.createElement('div');
+                cardCol.classList.add('col-4', 'mb-4');
+
+                const cardLink = document.createElement('a');
+                cardLink.href = `/products/${item.id}`; // Replace with actual product detail endpoint
+                cardLink.classList.add('text-decoration-none');
+
+                const card = document.createElement('div');
+                card.classList.add('card', 'h-100');
+
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body', 'text-center');
+
+                const cardTitle = document.createElement('h5');
+                cardTitle.classList.add('card-title');
+                cardTitle.textContent = item.title;
+
+                const cardImage = document.createElement('img');
+                cardImage.src = item.image;
+                cardImage.alt = item.title;
+                cardImage.classList.add('card-img-top', 'mb-3');
+
+                cardBody.appendChild(cardTitle);
+                card.appendChild(cardImage);
+                card.appendChild(cardBody);
+                cardLink.appendChild(card);
+                cardCol.appendChild(cardLink);
+                productList.appendChild(cardCol);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+</script>
+{% endblock %}
